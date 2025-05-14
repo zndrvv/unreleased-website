@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unreleased | Streetwear Wardrobe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Header -->
+<div class="header"></div>
+
+<!-- Navbar -->
+<div class="container">
+  <div class="navbar">
+    <div class="nav-left">
+      <ul>
+        <li><a href="#">Shop Mens</a></li>
+        <li><a href="#">Shop Womens</a></li>
+        <li><a href="#">Shop Kids</a></li>
+      </ul>
+    </div>
+
+    <div class="logo">
+      <img src="Image/logo.PNG" width="125px" />
+    </div>
+
+    <div class="nav-right">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Products</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Account</a></li>
+      </ul>
+      <img src="Image/cart.PNG" alt="Cart" class="cart-icon" />
+    </div>
+  </div>
+</div>
+
+<!-- Products -->
+<div class="categories">
+  <div class="small-container">
+    <div class="row">
+      <div class="col-3">
+        <div class="image-wrapper">
+          <a href="products/hoodie.html"><img src="Image/Hoodie.PNG" alt="Hoodie" /></a>
+        </div>
+        <p class="unreleased-label">UNRELEASED<br>Classic Hoodie</p>
+        <p class="unreleased-price">₱1,299</p>
+      </div>
+      <div class="col-3">
+        <div class="image-wrapper">
+          <a href="products/tee.html"><img src="Image/Tshirt.PNG" alt="Tshirt" /></a>
+        </div>
+        <p class="unreleased-label">UNRELEASED<br>Classic Tee</p>
+        <p class="unreleased-price">₱499</p>
+      </div>
+      <div class="col-3">
+        <div class="image-wrapper">
+          <a href="products/jacket.html"><img src="Image/Jacket.PNG" alt="Jacket" /></a>
+        </div>
+        <p class="unreleased-label">UNRELEASED<br>Classic Jacket</p>
+        <p class="unreleased-price">₱1,699</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="cartSidebar" class="sidebar">
+  <p>Your cart is empty.</p>
+</div>
+<div id="overlay" class="overlay"></div>
+
+<script>
+  const cartIcon = document.querySelector('.cart-icon');
+  const sidebar = document.getElementById('cartSidebar');
+  const overlay = document.getElementById('overlay');
+
+  let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+  function saveCart() {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }
+
+  function renderCart() {
+    sidebar.innerHTML = '';
+
+    if (cartItems.length === 0) {
+      sidebar.innerHTML = '<p>Your cart is empty.</p>';
+    } else {
+      cartItems.forEach((item, index) => {
+        const cartItemDiv = document.createElement('div');
+        cartItemDiv.classList.add('cart-item');
+        cartItemDiv.style.marginBottom = '20px';
+
+        cartItemDiv.innerHTML = `
+          <img src="${item.image}" width="100%">
+          <div>
+            <h4>${item.name}</h4>
+            <p>Size: ${item.size}</p>
+            <p>₱${item.price}</p>
+            <button onclick="removeFromCart(${index})" style="padding: 6px 12px; font-weight: bold; border: 1px solid red; background: white; color: red; cursor: pointer; border-radius: 4px;">Remove</button>
+          </div>
+        `;
+
+        sidebar.appendChild(cartItemDiv);
+      });
+
+      const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+      const totalDiv = document.createElement('div');
+      totalDiv.classList.add('total-container');
+      totalDiv.innerHTML = `
+        <div class="total">Total: ₱${total.toLocaleString()}</div>
+        <button class="checkout-btn" onclick="proceedToCheckout()">Checkout</button>
+      `;
+      sidebar.appendChild(totalDiv);
+    }
+  }
+
+  function proceedToCheckout() {
+    alert('Proceeding to checkout!');
+  }
+
+  window.removeFromCart = function(index) {
+    cartItems.splice(index, 1);
+    saveCart();
+    renderCart();
+  };
+
+  cartIcon.addEventListener('click', () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('show');
+    renderCart();
+  });
+
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  });
+
+  renderCart();
+</script>
+
+</body>
+</html>
