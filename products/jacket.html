@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Classic Jacket by Unreleased</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <a href="../index.html"><img src="../Image/logo.PNG" width="125px" class="center-logo"></a>
+  
+   <div style="text-align: center;">
+    <img src="../Image/menu.PNG" alt="Menu" class="menu-in icon-img">
+    <img src="../Image/cart.PNG" alt="Cart" class="cart-in icon-img">
+  </div>
+
+  <div class="jacket-text">
+    <p>CLASSIC JACKET BY<br>UNRELEASED</p>
+    <p>
+      <div class="jacket-description">
+        • BOXY<br>
+        • CROPPED<br>
+        • BUTTON-UP<br>
+        • WOOL<br>
+        • MODERN<br>
+        • MINIMALIST
+      </div>
+    </p>
+  </div>
+
+  <div class="right-options">
+    <div class="size-button-row">
+      <button class="size-btn">S</button>
+      <button class="size-btn">M</button>
+      <button class="size-btn">L</button>
+      <button class="size-btn">XL</button>
+    </div>
+    <button class="add-to-cart">ADD TO CART - ₱1,699</button>
+  </div>
+
+  <div class="jacket-image">
+    <img src="../Image/JacketM.PNG" class="jacket-model">
+  </div>
+
+  <div id="cartSidebar" class="sidebar">
+    <p>Your cart is empty.</p>
+  </div>
+  <div id="overlay" class="overlay"></div>
+
+  <script>
+    const cartIcon = document.querySelector('.cart-in');
+    const sidebar = document.getElementById('cartSidebar');
+    const overlay = document.getElementById('overlay');
+    const addToCartBtn = document.querySelector('.add-to-cart');
+
+    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+    function saveCart() {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+
+    function renderCart() {
+      sidebar.innerHTML = '';
+
+      if (cartItems.length === 0) {
+        sidebar.innerHTML = '<p>Your cart is empty.</p>';
+      } else {
+        cartItems.forEach((item, index) => {
+          const cartItemDiv = document.createElement('div');
+          cartItemDiv.classList.add('cart-item');
+          cartItemDiv.style.marginBottom = '20px';
+
+          cartItemDiv.innerHTML = `
+            <img src="${item.image}" width="100%">
+            <div>
+              <h4>${item.name}</h4>
+              <p>Size: ${item.size}</p>
+              <p>₱${item.price}</p>
+              <button onclick="removeFromCart(${index})" style="padding: 6px 12px; font-weight: bold; border: 1px solid red; background: white; color: red; cursor: pointer; border-radius: 4px;">Remove</button>
+            </div>
+          `;
+
+          sidebar.appendChild(cartItemDiv);
+        });
+
+        const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+
+        const totalDiv = document.createElement('div');
+        totalDiv.classList.add('total-container');
+        totalDiv.innerHTML = `
+          <div class="total">Total: ₱${total.toLocaleString()}</div>
+          <button class="checkout-btn" onclick="proceedToCheckout()">Checkout</button>
+        `;
+        sidebar.appendChild(totalDiv);
+      }
+    }
+
+    function proceedToCheckout() {
+      alert('Proceeding to checkout!');
+    }
+
+    addToCartBtn.addEventListener('click', () => {
+      const selectedSize = document.querySelector('.size-btn.selected');
+      if (!selectedSize) {
+        alert('Please select a size.');
+        return;
+      }
+
+      const item = {
+        name: 'Classic Jacket by Unreleased',
+        price: 1699,
+        size: selectedSize.textContent,
+        image: '../Image/JacketM.PNG'
+      };
+
+      cartItems.push(item);
+      saveCart();
+      renderCart();
+
+      cartIcon.classList.add('cart-pop');
+      setTimeout(() => {
+        cartIcon.classList.remove('cart-pop');
+      }, 300);
+    });
+
+    document.querySelectorAll('.size-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    cartIcon.addEventListener('click', () => {
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      renderCart();
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    });
+
+    window.removeFromCart = function(index) {
+      cartItems.splice(index, 1);
+      saveCart();
+      renderCart();
+    };
+
+    renderCart();
+  </script>
+
+</body>
+</html>
